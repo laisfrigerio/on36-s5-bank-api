@@ -1,56 +1,52 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { uuid } from 'uuidv4';
 import { Client } from './client.entity';
 
 @Injectable()
 export class ClientRepository {
-  constructor(
-    @InjectRepository(Client)
-    private repository: Repository<Client>,
-  ) {}
+  private clients: Client[] = [];
 
-  async getAllClients(): Promise<Client[]> {
-    return await this.repository.find({ relations: ['accounts'] });
+  constructor() {}
+
+  getAllClients(): Client[] {
+    return this.clients;
   }
 
-  async getClientsByManagerId(managerId: string): Promise<Client[]> {
-    return await this.repository.find({
-      where: { manager: { id: managerId } },
-    });
+  getClientsByManagerId(managerId: string): Client[] {
+    return this.clients.filter((client) => client.manager.id === managerId);
   }
 
-  async getClientByIdAndManagerId(
+  getClientByIdAndManagerId(
     clientId: string,
     managerId: string,
-  ): Promise<Client | null> {
-    return await this.repository.findOne({
-      where: {
-        id: clientId,
-        manager: { id: managerId },
-      },
+  ): Client | null {
+    const client = this.clients.find(
+      (client) => client.id === clientId && client.manager.id === managerId,
+    );
+
+    return client;
+  }
+
+  getClientByAccountId(accountId: string): Client | null {
+    const client = this.clients.find((client) => {
+      return client.accounts.some((account) => account.id === accountId);
     });
+
+    return client;
   }
 
-  async getClientByAccountId(accountId: string): Promise<Client | null> {
-    return await this.repository.findOne({
-      where: { accounts: { id: accountId } },
-      relations: ['accounts'],
-    });
+  getClientById(clientId: string): Client | null {
+    const client = this.clients.find((client) => client.id === clientId);
+    return client;
   }
 
-  async getClientById(clientId: string): Promise<Client | null> {
-    return await this.repository.findOne({
-      where: { id: clientId },
-      relations: ['accounts'],
-    });
+  createClient(client: Client): Client {
+    client.id = uuid();
+    this.clients.push(client);
+    return client;
   }
 
-  async createClient(client: Client): Promise<Client> {
-    return this.repository.save(client);
-  }
-
-  async removeClient(clientId: string): Promise<void> {
-    await this.repository.delete(clientId);
+  removeClient(clientId: string): void {
+    this.clients = this.clients.filter((client) => client.id !== clientId);
   }
 }

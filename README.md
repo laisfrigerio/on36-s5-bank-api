@@ -1,73 +1,138 @@
+<h1 align="center">
+  <img src="assets/reprograma-fundos-claros.png" alt="logo reprograma" width="500">
+</h1>
+
+# Banco de dados
+
+Turma Online ON36 - Imersão JavaScript | Semana 5 | 2024 | Professora Lais Frigério
+
+## Professora Lais
+
+<h1>
+  <img src="./assets/lais.png" alt="foto lais" width="200">
+</h1>
+
+Eu sou engenheira de software, professora de programação e compartilho conteúdo técnico em minhas redes sociais!
+
+Fui aluna da segunda turma do curso Eudca{devas} em 2023!
+Hoje trabalho como Engenheira de Software no Nubank.
+
+- 💌 Email: laisfrigerio.dev@gmail.com
+- 📸 Instagram: [@laisfrigerio](https://www.instagram.com/laisfrigerio/)
+- 💼 LinkedIn: [in/laisfrigerio](https://www.linkedin.com/in/laisfrigerio/)
+- 👩‍💻 Github:[/laisfrigerio](https://github.com/laisfrigerio)
+
+## Sistema
+
+Este projeto consiste em uma API para simular um banco, com clientes e suas contas, além de toda a gerenciamento feito pelos gerentes.
+
+O cliente possui os seguintes dados:
+
+- Nome
+- Endereço
+- Telefone
+- Contas
+
+> Obs: Um cliente pode ter mais de uma conta.
+
+Nosso banco possui 2 tipos de Conta:
+
+- Conta Corrente
+- Conta Poupança
+
+Segue os requisitos de negócio:
+
+- Cada cliente pode ter uma ou mais contas bancárias. As contas podem ser do tipo Conta Corrente ou Conta Poupança.
+- Para a conta corrente, é necessário armazenar o limite do cheque especial.
+- Para a conta poupança, é necessário armazenar a taxa de juros.
+- As Contas podem fazer depósito, tranferencia e saque
+
+Atualmente, essa API contém as seguintes rotas para clientes:
+
+- GET http://localhost:3000/clients
+- GET http://localhost:3000/clients/:clientId
+- POST http://localhost:3000/clients
+
+Também contém as seguintes rotas para cadastro de gerentes:
+
+- GET http://localhost:3000/managers
+- GET http://localhost:3000/managers/:id
+- POST http://localhost:3000/managers
+- DELETE http://localhost:3000/users/:id
+
+E também possuim as seguintes rotas para um gerente gerenciar as contas dos seus respectivos clientes:
+
+- GET http://localhost:3000/managers/:managerId/clients (Lista de seus clientes)
+- POST http://localhost:3000/managers/:managerId/clients (Adicionar novo cliente)
+- DELETE http://localhost:3000/managers/:managerId/clients/:clientId (Remover cliente)
+- POST http://localhost:3000/managers/:managerId/clients/:clientId/accounts (Adicionar conta à um cliente)
+- DELETE http://localhost:3000/managers/:managerId/accounts/:accountId (Remove conta de um cliente)
+- POST http://localhost:3000/managers/:managerId/accounts/:accountId/change-type (Mudar tipo da conta)
+
+### Tecnologias
+
+Este projeto foi construído com as seguintes tecnologias:
+
+- NestJs
+- TypeScript
+- Jest / Supertest
+
+## Executar o projeto
+
+- Instalação das dependências:
+
+```sh
+npm install
+```
+
+- Execução:
+
+```sh
+npm run start:dev
+```
+
+> Esse comando executa a aplicação com nodemon. A cada atualização, a aplicação é buildada automaticamente!
+
+### Acessando rota via CURL
+
+- GET lista de clients:
+
+```sh
+curl -X GET 'http://localhost:3000/clients'
+```
+
+- GET client pelo seu ID (uuid):
+
+```sh
+curl -X GET 'http://localhost:3000/clients/:clientId'
+```
+
+- POST cadastrando um gerente:
+
+```sh
+curl -X POST 'http://localhost:3000/managers' -H 'Content-Type: application/json' --data '{
+  "name": "Maria Joana"
+  }'
+```
+
+- GET listando todos os gerentes:
+
+```sh
+curl -X GET 'http://localhost:3000/managers'
+```
+
+- GET pegando dados de um gerente pelo seu ID:
+
+```sh
+curl -X GET 'http://localhost:3000/managers/:managerId'
+```
+
+- DELETE removendo um gerente pelo seu ID:
+
+```sh
+curl -X DELETE 'http://localhost:3000/managers/:managerId'
+```
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+Desenvolvido com :purple_heart: por laisfrigerio
 </p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
-```bash
-$ npm install
-```
-
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).

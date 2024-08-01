@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { TAccount } from '../accounts/account.entity';
 import { Manager } from './manager.entity';
 import { Client } from '../clients/client.entity';
 import { AccountType } from '../accounts/account-type.enum';
 import { AccountService } from '../accounts/account.service';
 import { ManagerRepository } from './manager.repository';
-import { ClientService } from 'src/clients/client.service';
+import { ClientService } from '../clients/client.service';
 
 @Injectable()
 export class ManagerService {
@@ -14,64 +15,85 @@ export class ManagerService {
     private accountService: AccountService,
   ) {}
 
-  async addClient(managerId: string, client: Client): Promise<Client> {
-    const manager = await this.managerRepository.findManagerById(managerId);
+  getAllManagers(): Manager[] {
+    return this.managerRepository.getAllManagers();
+  }
+
+  getManagerById(managerId: string): Manager {
+    const manager = this.managerRepository.findManagerById(managerId);
+
+    if (!manager) {
+      throw new NotFoundException({ message: 'Manager not found' });
+    }
+
+    return manager;
+  }
+
+  createManager(manager: Manager): Manager {
+    return this.managerRepository.createManager(manager);
+  }
+
+  removeManager(managerId: string): void {
+    this.managerRepository.removeManager(managerId);
+  }
+
+  addClient(managerId: string, client: Client): Client {
+    const manager = this.managerRepository.findManagerById(managerId);
     client.manager = manager;
     return this.clientService.createClient(client);
   }
 
-  async removeClient(managerId: string, clientId: string): Promise<void> {
-    const client = await this.clientService.getClientByIdAndManagerId(
+  removeClient(managerId: string, clientId: string): void {
+    const client = this.clientService.getClientByIdAndManagerId(
       clientId,
       managerId,
     );
-    await this.clientService.removeClient(client.id);
+    this.clientService.removeClient(client.id);
   }
 
-  async getClientsByManagerId(managerId: string): Promise<Client[]> {
-    return await this.clientService.getClientsByManagerId(managerId);
+  getClientsByManagerId(managerId: string): Client[] {
+    return this.clientService.getClientsByManagerId(managerId);
   }
 
-  async getManagerById(managerId: string): Promise<Manager> {
-    const manager = await this.managerRepository.findManagerById(managerId);
-    return manager;
-  }
-
-  async openAccount(
+  openAccount(
     managerId: string,
     clientId: string,
     type: AccountType,
-  ): Promise<void> {
-    const client = await this.clientService.getClientById(clientId);
+  ): TAccount {
+    const client = this.clientService.getClientById(clientId);
 
-    const manager = await this.managerRepository.findManagerById(managerId);
+    const manager = this.managerRepository.findManagerById(managerId);
     client.manager = manager;
 
-    await this.accountService.createAccount(type, client);
+    return this.accountService.createAccount(type, client);
   }
 
-  async closeAccount(managerId: string, accountId: string): Promise<void> {
-    if (await this.isClientAssignedToManager(managerId, accountId)) {
-      await this.accountService.deleteAccount(accountId);
+  closeAccount(managerId: string, accountId: string): void {
+    if (!this.isClientAssignedToManager(managerId, accountId)) {
+      throw new Error('Client does not belong to manager');
     }
+
+    this.accountService.deleteAccount(accountId);
   }
 
-  async modifyAccountType(
+  modifyAccountType(
     managerId: string,
     accountId: string,
     newType: AccountType,
-  ): Promise<void> {
-    if (await this.isClientAssignedToManager(managerId, accountId)) {
-      await this.accountService.changeAccountType(accountId, newType);
+  ): TAccount {
+    if (!this.isClientAssignedToManager(managerId, accountId)) {
+      throw new Error('Client does not belong to manager');
     }
+
+    return this.accountService.changeAccountType(accountId, newType);
   }
 
-  private async isClientAssignedToManager(
+  private isClientAssignedToManager(
     accountId: string,
     managerId: string,
-  ): Promise<boolean> {
-    const client = await this.clientService.getClientByAccountId(accountId);
-    const manager = await this.getManagerById(managerId);
+  ): boolean {
+    const client = this.clientService.getClientByAccountId(accountId);
+    const manager = this.getManagerById(managerId);
 
     if (client.manager && client.manager.id !== manager.id) {
       throw new Error('Client does not belong to manager');

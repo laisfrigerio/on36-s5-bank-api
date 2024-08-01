@@ -1,22 +1,15 @@
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  TableInheritance,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { AccountType } from './account-type.enum';
 import { Client } from '../clients/client.entity';
 
-@Entity('accounts')
-@TableInheritance({ column: { type: 'varchar', name: 'type_account' } })
+export type TAccount = CheckingAccount | SavingsAccount;
+
 export abstract class Account {
-  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  typeAccount: AccountType.Checking | AccountType.Savings;
+
   balance: number;
 
-  @ManyToOne(() => Client, (client) => client.accounts)
   client: Client;
 
   getBalance(): number {
@@ -39,9 +32,7 @@ export abstract class Account {
   abstract transfer(destino: Account, value: number): void;
 }
 
-@Entity()
 export class CheckingAccount extends Account {
-  @Column()
   overdraftLimit: number;
 
   getBalance(): number {
@@ -59,9 +50,7 @@ export class CheckingAccount extends Account {
   }
 }
 
-@Entity()
 export class SavingsAccount extends Account {
-  @Column()
   taxRate: number;
 
   transfer(destiny: Account, value: number): void {

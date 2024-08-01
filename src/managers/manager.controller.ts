@@ -3,68 +3,76 @@ import { ManagerService } from './manager.service';
 import { Client } from '../clients/client.entity';
 import { Manager } from '../managers/manager.entity';
 import { AccountType } from '../accounts/account-type.enum';
+import { TAccount } from 'src/accounts/account.entity';
 
 @Controller('managers')
 export class ManagerController {
   constructor(private readonly managerService: ManagerService) {}
 
+  @Get('')
+  getAllManagers(): Manager[] {
+    return this.managerService.getAllManagers();
+  }
+
   @Get(':managerId')
-  async getManagerById(
-    @Param('managerId') managerId: string,
-  ): Promise<Manager> {
-    return await this.managerService.getManagerById(managerId);
+  getManagerById(@Param('managerId') managerId: string): Manager {
+    return this.managerService.getManagerById(managerId);
+  }
+
+  @Post()
+  createManager(@Body() manager: Manager): Manager {
+    return this.managerService.createManager(manager);
+  }
+
+  @Delete(':managerId')
+  removeManager(@Param('managerId') managerId: string): void {
+    this.managerService.removeManager(managerId);
   }
 
   @Post(':managerId/clients')
-  async addClient(
+  addClient(
     @Param('managerId') managerId: string,
     @Body() client: Client,
-  ): Promise<Client> {
-    return await this.managerService.addClient(managerId, client);
+  ): Client {
+    return this.managerService.addClient(managerId, client);
   }
 
   @Delete(':managerId/clients/:clientId')
-  async removeClient(
+  removeClient(
     @Param('managerId') managerId: string,
     @Param('clientId') clientId: string,
-  ): Promise<void> {
-    return await this.managerService.removeClient(managerId, clientId);
+  ): void {
+    return this.managerService.removeClient(managerId, clientId);
   }
 
   @Get(':managerId/clients')
-  async getClientsByManagerId(
-    @Param('managerId') managerId: string,
-  ): Promise<Client[]> {
-    return await this.managerService.getClientsByManagerId(managerId);
+  getClientsByManagerId(@Param('managerId') managerId: string): Client[] {
+    return this.managerService.getClientsByManagerId(managerId);
   }
 
   @Post(':managerId/clients/:clientId/accounts')
-  async openAccount(
+  openAccount(
     @Param('managerId') managerId: string,
     @Param('clientId') clientId: string,
     @Body('type') type: AccountType,
-  ): Promise<void> {
-    return await this.managerService.openAccount(managerId, clientId, type);
+  ): TAccount {
+    return this.managerService.openAccount(managerId, clientId, type);
   }
 
   @Delete(':managerId/accounts/:accountId')
-  async closeAccount(
+  closeAccount(
     @Param('managerId') managerId: string,
     @Param('accountId') accountId: string,
-  ): Promise<void> {
-    return await this.managerService.closeAccount(managerId, accountId);
+  ): void {
+    return this.managerService.closeAccount(managerId, accountId);
   }
 
   @Post(':managerId/accounts/:accountId/change-type')
-  async modifyAccountType(
+  modifyAccountType(
     @Param('managerId') managerId: string,
     @Param('accountId') accountId: string,
     @Body('newType') newType: AccountType,
-  ): Promise<void> {
-    return await this.managerService.modifyAccountType(
-      managerId,
-      accountId,
-      newType,
-    );
+  ): TAccount {
+    return this.managerService.modifyAccountType(managerId, accountId, newType);
   }
 }

@@ -11,17 +11,21 @@ export class AccountFactory {
   ): CheckingAccount | SavingsAccount {
     switch (type) {
       case AccountType.Checking:
-        const currentAccount = new CheckingAccount();
-        currentAccount.balance = 0;
-        currentAccount.overdraftLimit = 500; // Exemplo de limite
-        currentAccount.client = client;
-        return currentAccount;
+        const checkingAccount = new CheckingAccount();
+        checkingAccount.balance = 0;
+        checkingAccount.overdraftLimit = 500;
+        checkingAccount.client = client;
+        checkingAccount.typeAccount = AccountType.Checking;
+        return checkingAccount;
+
       case AccountType.Savings:
         const savingsAccount = new SavingsAccount();
         savingsAccount.balance = 0;
-        savingsAccount.taxRate = 0.02; // Exemplo de taxa de juros
+        savingsAccount.taxRate = 0.02;
         savingsAccount.client = client;
+        savingsAccount.typeAccount = AccountType.Savings;
         return savingsAccount;
+
       default:
         throw new Error('Invalid account type');
     }

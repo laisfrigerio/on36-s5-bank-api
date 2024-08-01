@@ -9,18 +9,18 @@ export class ClientController {
   constructor(private readonly clientService: ClientService) {}
 
   @Post()
-  createClient(@Body() createClientDto: CreateClientDto): Promise<Client> {
+  createClient(@Body() createClientDto: CreateClientDto): Client {
     const client: IClient = { ...createClientDto };
     return this.clientService.createClient(client);
   }
 
   @Get()
-  getAllClients(): Promise<Client[]> {
+  getAllClients(): Client[] {
     return this.clientService.getAllClients();
   }
 
   @Get()
-  getClientById(id: string): Promise<Client> {
+  getClientById(id: string): Client {
     return this.clientService.getClientById(id);
   }
 }

@@ -1,26 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { uuid } from 'uuidv4';
 import { Manager } from './manager.entity';
 
 @Injectable()
 export class ManagerRepository {
-  constructor(
-    @InjectRepository(Manager)
-    private readonly repository: Repository<Manager>,
-  ) {}
+  private managers: Manager[] = [];
 
-  async findManagerById(managerId: string): Promise<Manager | null> {
-    return await this.repository.findOne({
-      where: { id: managerId },
-    });
+  constructor() {}
+
+  getAllManagers(): Manager[] {
+    return this.managers;
   }
 
-  async createManager(manager: Manager): Promise<Manager> {
-    return await this.repository.save(manager);
+  createManager(manager: Manager): Manager {
+    manager.id = uuid();
+    this.managers.push(manager);
+    return manager;
   }
 
-  async removeManager(managerId: string): Promise<void> {
-    await this.repository.delete(managerId);
+  findManagerById(managerId: string): Manager | null {
+    const manager = this.managers.find((manager) => manager.id === managerId);
+    return manager;
+  }
+
+  removeManager(managerId: string): void {
+    this.managers = this.managers.filter((manager) => manager.id !== managerId);
   }
 }

@@ -1,52 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ClientRepository } from './client.repository';
 import { Client } from './client.entity';
 import { IClient } from './client.interface';
 
 @Injectable()
 export class ClientService {
-  constructor(
-    @InjectRepository(ClientRepository)
-    private clientRepository: ClientRepository,
-  ) {}
+  public clients: Client[] = [];
+  constructor(private clientRepository: ClientRepository) {}
 
-  async createClient(client: IClient): Promise<Client> {
+  createClient(client: IClient): Client {
     const { name, address, phoneNumber } = client;
-    return await this.clientRepository.createClient({
+    return this.clientRepository.createClient({
       name,
       address,
       phoneNumber,
     });
   }
 
-  async removeClient(clientId: string): Promise<void> {
-    await this.clientRepository.removeClient(clientId);
+  removeClient(clientId: string): void {
+    this.clientRepository.removeClient(clientId);
   }
 
-  async getAllClients(): Promise<Client[]> {
-    return await this.clientRepository.getAllClients();
+  getAllClients(): Client[] {
+    return this.clientRepository.getAllClients();
   }
 
-  async getClientsByManagerId(clientId: string): Promise<Client[] | null> {
-    return await this.clientRepository.getClientsByManagerId(clientId);
+  getClientsByManagerId(clientId: string): Client[] {
+    return this.clientRepository.getClientsByManagerId(clientId);
   }
 
-  async getClientById(clientId: string): Promise<Client | null> {
-    return await this.clientRepository.getClientById(clientId);
+  getClientById(clientId: string): Client | null {
+    return this.clientRepository.getClientById(clientId);
   }
 
-  async getClientByAccountId(accountId: string): Promise<Client | null> {
-    return await this.clientRepository.getClientByAccountId(accountId);
+  getClientByAccountId(accountId: string): Client | null {
+    return this.clientRepository.getClientByAccountId(accountId);
   }
 
-  async getClientByIdAndManagerId(
+  getClientByIdAndManagerId(
     clientId: string,
     managerId: string,
-  ): Promise<Client | null> {
-    return await this.clientRepository.getClientByIdAndManagerId(
-      clientId,
-      managerId,
-    );
+  ): Client | null {
+    return this.clientRepository.getClientByIdAndManagerId(clientId, managerId);
   }
 }

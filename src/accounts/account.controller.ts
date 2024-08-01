@@ -3,7 +3,7 @@ import { Controller, Post, Body } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { AccountType } from './account-type.enum';
 import { ClientService } from '../clients/client.service';
-import { CheckingAccount, SavingsAccount } from './account.entity';
+import { TAccount } from './account.entity';
 
 @Controller('accounts')
 export class AccountController {
@@ -13,11 +13,11 @@ export class AccountController {
   ) {}
 
   @Post()
-  async createAccount(
+  createAccount(
     @Body('type') type: AccountType,
     @Body('clientId') clientId: string,
-  ): Promise<CheckingAccount | SavingsAccount> {
-    const client = await this.clientService.getClientById(clientId);
+  ): TAccount {
+    const client = this.clientService.getClientById(clientId);
     return this.accountService.createAccount(type, client);
   }
 }
